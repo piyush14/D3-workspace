@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+text {
+  font: 10px sans-serif;
+}
+
+</style>
+</head>
+<body>
+	<p> D3.js Training - simple bubble chart</p> 
+	<script type="text/javascript" src="d3.min.js"></script>
+<script>
+
+var diameter = 500,
+    format = d3.format(",d"),
+    color = d3.scale.category20c();
+
+	// d3.layout.pack is one of many d3 layouts that are used for calculating parameters for various layouts.
+var bubble = d3.layout.pack()
+    .sort(null)
+    .size([diameter, diameter])
+    .padding(1.5);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+    .attr("class", "bubble");
+  
+  // data
+  var root = [{
+     "sale": "100",
+     "year": "2000"
+    }, {
+     "sale": "40",
+     "year": "2001"
+    }, {
+     "sale": "179",
+     "year": "2002"
+    }, {
+     "sale": "199",
+     "year": "2003"
+    }, {
+     "sale": "134",
+     "year": "2003"
+    }, {
+     "sale": "700",
+     "year": "2010"
+    }];
+
+  // bubble.nodes(classes(root)) creates keys that will be helpful in creating the bubble layout.
+  var node = svg.selectAll(".node")
+      .data(bubble.nodes(classes(root)).filter(function(d) { return !d.children; }))
+    .enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  node.append("title")
+      .text(function(d) { return d.year + ": " + format(d.sale); });
+
+  node.append("circle")
+      .attr("r", function(d) { return d.r; })
+      .style("fill", function(d, i) { return color(i); });
+
+  node.append("text")
+      .attr("dy", ".3em")
+      .style("text-anchor", "middle")
+      .text(function(d) { return d.year + ": " + format(d.sale); });
+
+// Returns a flattened hierarchy containing all leaf nodes under the root.
+function classes(root) {
+  return { children: root.map(function(node) { return {sale: +node.sale, year: +node.year, value: +node.sale}; }) };
+}
+
+d3.select(self.frameElement).style("height", diameter + "px");
+</script>
+</body>
+</html>

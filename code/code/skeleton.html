@@ -1,0 +1,40 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+	 <script type="text/javascript" src="d3.min.js"></script>
+</head> 
+<body> 
+	 <p> D3.js Training - Skeleton of visualizations</p> 
+</body> 
+<script>
+	
+	// enviornment setup
+		var svgConfig = {
+							width:50,
+							height:50
+						};
+						
+		var circleConfig = {
+							cx:25,
+							cy:25,
+							r:25,
+							color:"red"
+						 };		
+	
+	
+	// drawing
+		var bodySelection = d3.select("body");
+		
+		var svgSelection  = bodySelection.append("svg")
+							.attr("id", "mySvg")
+							.attr("width",svgConfig.width)
+							.attr("height",svgConfig.height);
+		
+		var circleSelection = svgSelection.append("circle")
+								.attr("cx",circleConfig.cx)
+								.attr("cy",circleConfig.cy)
+								.attr("r",circleConfig.r)
+								.style("fill",circleConfig.color);
+	
+</script>
+</html>

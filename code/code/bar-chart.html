@@ -1,0 +1,138 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+	 <script type="text/javascript" src="d3.min.js"></script>
+	  <style>
+		 .axis path {
+			fill: none;
+			stroke: #777;
+			shape-rendering: crispEdges;
+		}
+		.axis text {
+			font-family: Lato;
+			font-size: 13px;
+		}
+		.axis line {
+		  fill: none;
+		  stroke: #000;
+		  shape-rendering: crispEdges;
+		}
+		rect {
+			-moz-transition: all 0.3s;
+			-webkit-transition: all 0.3s;
+			-o-transition: all 0.3s;
+			transition: all 0.3s;
+		}
+		rect:hover{
+			fill: orange;
+		}
+	  </style>
+</head> 
+<body> 
+	 <p> D3.js Training - simple bar chart</p> 
+</body> 
+<script>
+	
+	// chart data
+	var chartConfig = {
+		barWidth:20,
+		data:[{
+					"sale": "202",
+					"year": "2000"
+				}, {
+					"sale": "215",
+					"year": "2001"
+				}, {
+					"sale": "179",
+					"year": "2002"
+				}, {
+					"sale": "199",
+					"year": "2003"
+				}, {
+					"sale": "134",
+					"year": "2004"
+				}, {
+					"sale": "176",
+					"year": "2010"
+				}]
+	};
+	
+	// enviornment setup
+		var svgConfig = {
+						id:"mySvg",
+						width:600,
+						height:300,
+						margin : {
+							top: 20,
+							right: 20,
+							bottom: 20,
+							left: 50
+						  }
+						};
+								
+	// drawing
+		// append svg element
+			var bodySelection = d3.select("body");
+			
+			var svgSelection  = bodySelection.append("svg")
+								.attr("id", svgConfig.id)
+								.attr("width",svgConfig.width)
+								.attr("height",svgConfig.height);
+								
+		// create x scale
+			xScale = d3.scale.linear().range([svgConfig.margin.left, svgConfig.width - svgConfig.margin.right]).domain([1999,2011]);
+		
+		// create y scale
+			yScale = d3.scale.linear()
+					   .range([svgConfig.height - svgConfig.margin.top, svgConfig.margin.bottom])
+					   .domain([134,d3.max(chartConfig.data, function(d) {return +d.sale;})]);
+		
+		// create bars
+			svgSelection.selectAll("rect")
+						   .data(chartConfig.data)
+						   .enter()
+						   .append("rect")
+						   .attr("x", function(d) {
+								return xScale(+d.year)// - chartConfig.barWidth/2;
+						   })
+						   .attr("y", function(d) {
+								return yScale(d.sale) - svgConfig.margin.bottom;
+						   })
+						   .attr("width", chartConfig.barWidth)
+						   .attr("height", function(d) {
+								return svgConfig.height - yScale(d.sale);
+						   })
+						   .attr("fill", function(d) {
+								return "rgb(90, 0, " + (+d.sale) + ")";
+						   })
+		
+		//let's create the axes using the scales
+			xAxis = d3.svg.axis()
+					.scale(xScale)
+					.tickFormat(d3.format("d"));
+			
+			yAxis = d3.svg.axis()
+					.orient("left")
+					.scale(yScale);
+		
+		// add xaxis to chart - it will add it to top of the svg
+			svgSelection.append("svg:g")
+			.attr("id","xAxis")
+			.attr("class","axis")
+			.call(xAxis);
+			
+		// The X axis is drawn but it has some issues. First, we need to position it vertically downwards using transform property
+			d3.select("#xAxis")
+			.attr("transform", "translate(0," + (svgConfig.height - svgConfig.margin.bottom) + ")");
+			
+		// add yaxis to chart, but this will not add it to correct oorientation
+			svgSelection.append("svg:g")
+			.attr("id","yAxis")
+			.attr("class","axis")
+			.call(yAxis);	
+		
+		// apply transform logic to bring it to correct place
+			d3.select("#yAxis")
+			.attr("transform", "translate(" + (svgConfig.margin.left) + ",0)")
+</script>
+</html>

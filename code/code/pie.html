@@ -1,0 +1,89 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+	 <script type="text/javascript" src="d3.min.js"></script>
+	  <style>
+		 .axis path {
+			fill: none;
+			stroke: #777;
+			shape-rendering: crispEdges;
+		}
+		.axis text {
+			font-family: Lato;
+			font-size: 13px;
+		}
+		.axis line {
+		  fill: none;
+		  stroke: #000;
+		  shape-rendering: crispEdges;
+		}
+	  </style>
+</head> 
+<body> 
+	 <p> D3.js Training - simple pie chart</p> 
+	 <div id="chart"></div>
+</body> 
+<script>
+	
+	// chart data
+	var chartConfig = {
+		pieRadius:150,
+		color : d3.scale.category20c(),
+		data:[
+				  {"label":"Laptop", "value":20}, 
+		          {"label":"Keyboard", "value":50}, 
+		          {"label":"Smart Phones", "value":30}, 
+		          {"label":"Tablets", "value":20}, 
+		          {"label":"Pen Drive", "value":30}
+			]
+	};
+	
+	// enviornment setup
+		var svgConfig = {
+						id:"mySvg",
+						width:600,
+						height:300,
+						margin : {
+							top: 20,
+							right: 20,
+							bottom: 20,
+							left: 50
+						  }
+						};
+								
+	// drawing
+		// append svg element
+			var bodySelection = d3.select("#chart");
+			
+			var svgSelection  = bodySelection.append("svg")
+								.attr("id", svgConfig.id)
+								.data([chartConfig.data])
+								.attr("width",svgConfig.width)
+								.attr("height",svgConfig.height)
+								.append("svg:g")
+								.attr("transform", "translate("+chartConfig.pieRadius+","+chartConfig.pieRadius+")");
+
+			var pie = d3.layout.pie().value(function(d){return d.value;});
+
+			// declare an arc generator function
+			var arc = d3.svg.arc().outerRadius(chartConfig.pieRadius);
+
+			// select paths, use arc generator to draw
+			var arcs = svgSelection.selectAll("g.slice").data(pie).enter().append("svg:g").attr("class", "slice");
+			arcs.append("svg:path")
+				.attr("fill", function(d, i){
+					return chartConfig.color(i);
+				})
+				.attr("d", function (d) {
+					return arc(d);
+				});
+
+			// add the text
+			arcs.append("svg:text").attr("transform", function(d){
+						d.innerRadius = 0;
+						d.outerRadius = chartConfig.pieRadius;
+				return "translate(" + arc.centroid(d) + ")";}).attr("text-anchor", "middle").text( function(d, i) {
+				return chartConfig.data[i].label;}
+					);
+</script>
+</html>
